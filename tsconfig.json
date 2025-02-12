@@ -13,6 +13,7 @@
     "expo-env.d.ts",
     "app/(auth)/sign-in.jsx",
     "app/(auth)/sign-up.jsx",
-    "context/AuthContext.jsx"
+    "context/AuthContext.jsx",
+    "app/index.jsx"
   ]
 }

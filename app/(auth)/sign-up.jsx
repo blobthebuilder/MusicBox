@@ -13,7 +13,7 @@ import Constants from "expo-constants";
 
 import { useAuth } from "@/context/AuthContext";
 
-const API_URL = Constants.expoConfig.extra.API_URL;
+const BACKEND_URL = Constants.expoConfig.extra.BACKEND_URL;
 
 export default function signUp() {
   const { login } = useAuth();
@@ -31,7 +31,7 @@ export default function signUp() {
 
     setSubmitting(true);
     try {
-      const response = await fetch(API_URL + "/auth/signup", {
+      const response = await fetch(BACKEND_URL + "/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -7,6 +7,7 @@ import { ThemedText } from "@/components/ThemedText";
 
 const profile = () => {
   const { userToken } = useAuth();
+  console.log(process.env.EXPO_PUBLIC_BACKEND_URL);
   return (
     <View style={styles.container}>
       {userToken ? (
@@ -18,6 +19,11 @@ const profile = () => {
           Sign in
         </Link>
       )}
+      <Link
+        href="/(auth)/spotify-login"
+        style={styles.text}>
+        Connect to spotify
+      </Link>
     </View>
   );
 };
