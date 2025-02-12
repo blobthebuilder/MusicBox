@@ -7,10 +7,16 @@ import { ThemedView } from "@/components/ThemedView";
 import FormField from "../../components/FormField";
 import CustomButton from "../../components/CustomButton";
 import { useState } from "react";
-import { Link } from "expo-router";
-import { API_URL } from "react-native-dotenv";
+import { Link, router } from "expo-router";
+import { Alert } from "react-native";
+import Constants from "expo-constants";
 
-export default function signIn() {
+import { useAuth } from "@/context/AuthContext";
+
+const API_URL = Constants.expoConfig.extra.API_URL;
+
+export default function signUp() {
+  const { login } = useAuth();
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -18,15 +24,21 @@ export default function signIn() {
   const [isSubmitting, setSubmitting] = useState(false); // used for styling
 
   const submit = async () => {
+    if (form.email === "" || form.password === "") {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+
+    setSubmitting(true);
     try {
-      const response = await fetch(API_URL + "/auth/login", {
+      const response = await fetch(API_URL + "/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: "test123@example.com",
-          password: "password123",
+          email: form.email,
+          password: form.password,
         }),
       });
 
@@ -37,12 +49,18 @@ export default function signIn() {
 
       const data = await response.json();
       console.log(data); // Log the response data
+      Alert.alert("Success", "User created successfully");
+      await login(data.token);
+      router.replace("/(tabs)/index");
     } catch (error) {
-      console.error("Error:", error); // Handle any errors here
+      Alert.alert("Error", error.message);
+    } finally {
+      setSubmitting(false);
     }
   };
+
   return (
-    <ParallaxScrollView
+    <ThemedView
       headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
       headerImage={
         <Image
@@ -69,17 +87,17 @@ export default function signIn() {
       />
 
       <CustomButton
-        title="Sign In"
+        title="Sign Up"
         handlePress={submit}
         containerStyles="mt-7"
         isLoading={isSubmitting}
       />
 
       <ThemedView>
-        <ThemedText>Don't have account?</ThemedText>
-        <Link href="/sign-up">Sign up</Link>
+        <ThemedText>Already have an account?</ThemedText>
+        <Link href="/(auth)/sign-in">Sign in</Link>
       </ThemedView>
-    </ParallaxScrollView>
+    </ThemedView>
   );
 }
 
