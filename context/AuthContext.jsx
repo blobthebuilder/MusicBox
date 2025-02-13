@@ -5,6 +5,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [userToken, setUserToken] = useState(null);
+  const [spotifyAccessToken, setSpotifyAccessToken] = useState(null);
 
   // Load token from SecureStore when the app starts
   useEffect(() => {
@@ -24,11 +25,18 @@ export const AuthProvider = ({ children }) => {
   // Remove token from SecureStore when logging out
   const logout = async () => {
     await SecureStore.deleteItemAsync("userToken");
+    await SecureStore.deleteItemAsync("spotifyAccessToken");
     setUserToken(null);
   };
 
+  const spotifyLogin = async (token) => {
+    await SecureStore.setItemAsync("spotifyAccessToken", token);
+    setSpotifyAccessToken(token);
+  };
+
   return (
-    <AuthContext.Provider value={{ userToken, login, logout }}>
+    <AuthContext.Provider
+      value={{ userToken, spotifyAccessToken, login, logout, spotifyLogin }}>
       {children}
     </AuthContext.Provider>
   );
