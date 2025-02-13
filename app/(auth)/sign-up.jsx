@@ -24,6 +24,8 @@ export default function signUp() {
   const [isSubmitting, setSubmitting] = useState(false); // used for styling
 
   const submit = async () => {
+    console.log("Submitted");
+    console.log(BACKEND_URL);
     if (form.email === "" || form.password === "") {
       Alert.alert("Error", "Please fill in all fields");
       return;
@@ -44,14 +46,16 @@ export default function signUp() {
 
       // Check if the response is successful
       if (!response.ok) {
-        throw new Error("Failed to login");
+        const errorData = await response.json(); // Extract error message from response
+        setSubmitting(false);
+        throw new Error(errorData.error || "Failed to login"); // Use server message if available
       }
 
       const data = await response.json();
       console.log(data); // Log the response data
       Alert.alert("Success", "User created successfully");
       await login(data.token);
-      router.replace("/(tabs)/index");
+      router.replace("/(tabs)");
     } catch (error) {
       Alert.alert("Error", error.message);
     } finally {
@@ -69,7 +73,7 @@ export default function signUp() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
+        <ThemedText type="title">Sign up page</ThemedText>
       </ThemedView>
 
       <FormField

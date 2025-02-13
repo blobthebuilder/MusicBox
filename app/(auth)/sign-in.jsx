@@ -72,7 +72,7 @@ export default function signIn() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
+        <ThemedText type="title">Sign in page</ThemedText>
       </ThemedView>
 
       <FormField
