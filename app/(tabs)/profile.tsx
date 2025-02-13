@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Button } from "react-native";
 import React from "react";
 import { Link } from "expo-router";
 
@@ -6,8 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { ThemedText } from "@/components/ThemedText";
 
 const profile = () => {
-  const { userToken } = useAuth();
-  console.log(process.env.EXPO_PUBLIC_BACKEND_URL);
+  const { userToken, logout } = useAuth();
   return (
     <View style={styles.container}>
       {userToken ? (
@@ -24,6 +23,10 @@ const profile = () => {
         style={styles.text}>
         Connect to spotify
       </Link>
+      <Button
+        title="Logout"
+        onPress={async () => await logout()}
+      />
     </View>
   );
 };
