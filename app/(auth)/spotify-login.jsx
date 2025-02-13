@@ -54,9 +54,9 @@ export default function SpotifyLogin() {
           });
 
           const tokenData = await tokenResponse.json();
-          console.log("Access Token:", tokenData.access_token);
+          console.log("tokendata: ", tokenData);
 
-          await spotifyLogin(tokenData.access_token);
+          await spotifyLogin(tokenData.access_token, tokenData.refresh_token);
         } catch (error) {
           console.error("Error fetching token:", error);
         }
