@@ -6,7 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { ThemedText } from "@/components/ThemedText";
 
 const profile = () => {
-  const { userToken, spotifyAccessToken } = useAuth();
+  const { userToken, spotifyAccessToken, logout } = useAuth();
 
   const fetchUserProfile = async () => {
     try {
@@ -46,6 +46,10 @@ const profile = () => {
       <Button
         title="fetch my profile"
         onPress={fetchUserProfile}
+      />
+      <Button
+        title="Logout"
+        onPress={async () => await logout()}
       />
     </View>
   );

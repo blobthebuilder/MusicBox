@@ -8,6 +8,7 @@ const SECRET = process.env.JWT_SECRET;
 
 // Signup Route
 router.post("/signup", async (req, res) => {
+  console.log("signup request");
   const { username, email, password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -16,7 +17,15 @@ router.post("/signup", async (req, res) => {
       "INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id, email",
       [email, hashedPassword]
     );
-    res.status(201).json({ message: "User created", user: result.rows[0] });
+    const user = result.rows[0];
+    const token = jwt.sign({ id: user.id, email: user.email }, SECRET, {
+      expiresIn: "7d",
+    });
+    res.status(201).json({
+      message: "User created",
+      token,
+      user: result.rows[0],
+    });
   } catch (err) {
     console.error("Error creating user:", err); // Log the error for debugging
 
@@ -35,6 +44,7 @@ router.post("/signup", async (req, res) => {
 
 // Login Route
 router.post("/login", async (req, res) => {
+  console.log("login request");
   const { email, password } = req.body;
 
   const user = await pool.query("SELECT * FROM users WHERE email = $1", [
