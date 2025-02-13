@@ -7,7 +7,6 @@ import { ThemedText } from "@/components/ThemedText";
 
 const profile = () => {
   const { userToken } = useAuth();
-  console.log(process.env.EXPO_PUBLIC_BACKEND_URL);
   return (
     <View style={styles.container}>
       {userToken ? (

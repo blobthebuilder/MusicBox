@@ -13,7 +13,7 @@ import Constants from "expo-constants";
 
 import { useAuth } from "@/context/AuthContext";
 
-const BACKEND_URL = Constants.expoConfig.extra.BACKEND_URL;
+const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
 export default function signUp() {
   const { login } = useAuth();
