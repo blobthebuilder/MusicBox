@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
+import { encode } from "base-64";
 
 const AuthContext = createContext();
 
@@ -7,6 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [userToken, setUserToken] = useState(null);
   const [spotifyAccessToken, setSpotifyAccessToken] = useState(null);
   const [spotifyRefreshToken, setSpotifyRefreshToken] = useState(null);
+  const [clientAccessToken, setClientAccessToken] = useState(null);
 
   // Load token from SecureStore when the app starts
   useEffect(() => {
@@ -16,13 +18,19 @@ export const AuthProvider = ({ children }) => {
       const refreshToken = await SecureStore.getItemAsync(
         "spotifyRefreshToken"
       );
+      const clientToken = await SecureStore.getItemAsync("clientAccessToken");
 
       setUserToken(token);
       setSpotifyAccessToken(accessToken);
       setSpotifyRefreshToken(refreshToken);
+      setClientAccessToken(clientToken);
 
       if (accessToken) {
         checkAndRefreshToken(); // 🔄 Refresh token if needed
+      }
+
+      if (!clientToken) {
+        getClientToken();
       }
     };
     loadToken();
@@ -82,10 +90,10 @@ export const AuthProvider = ({ children }) => {
         setSpotifyAccessToken(data.access_token);
         console.log("Spotify token refreshed!");
       } else {
-        console.error("Failed to refresh token", data);
+        console.log("Failed to refresh token", data);
       }
     } catch (error) {
-      console.error("Error refreshing Spotify token:", error);
+      console.log("Error refreshing Spotify token:", error);
     }
   };
 
@@ -102,12 +110,35 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const getClientToken = async () => {
+    try {
+      const response = await fetch("https://accounts.spotify.com/api/token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization:
+            "Basic " +
+            encode(
+              `${process.env.EXPO_PUBLIC_SPOTIFY_CLIENT_ID}:${process.env.EXPO_PUBLIC_SPOTIFY_CLIENT_SECRET}`
+            ).toString("base64"),
+        },
+        body: "grant_type=client_credentials",
+      });
+      const data = await response.json();
+      console.log("Client Access Token:", data.access_token);
+      setClientAccessToken(data.access_token);
+    } catch (error) {
+      console.log("Error getting client token", error);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
         userToken,
         spotifyAccessToken,
         spotifyRefreshToken,
+        clientAccessToken,
         login,
         logout,
         spotifyLogin,

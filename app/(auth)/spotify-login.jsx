@@ -29,6 +29,7 @@ export default function SpotifyLogin() {
     },
     discovery
   );
+
   useEffect(() => {
     const fetchToken = async () => {
       if (response?.type === "success") {
