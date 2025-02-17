@@ -12,6 +12,8 @@ app.use(express.json());
 
 // Import Routes
 app.use("/auth", require("./routes/authRoutes"));
+app.use("/reviews", require("./routes/reviewRoutes"));
+app.use("/requests", require("./routes/friendRequestRoutes"));
 //app.use("/songs", require("./routes/songRoutes"));
 
 const PORT = process.env.PORT || 5000;
